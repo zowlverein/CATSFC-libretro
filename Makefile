@@ -36,17 +36,13 @@ ASFLAGS  = $(CFLAGS)
 
 INCFLAGS := -I$(CORE_DIR) -I$(VITA_DIR) -I$(LIBRETRO_DIR)
 
-all: $(TARGET)_fixup.elf
+all: $(TARGET).elf
 
-%_fixup.elf: %.elf
+$(TARGET).elf: homebrew.elf
 	psp2-fixup -q -S $< $@
 
-$(TARGET).elf: $(OBJS)
+homebrew.elf: $(OBJS)
 	$(CC) $(CFLAGS) $(INCFLAGS) $^ $(LIBS) -o $@
 
 clean:
-	@rm -rf $(TARGET)_fixup.elf $(TARGET).elf $(OBJS)
-
-copy: $(TARGET)_fixup.elf
-	@cp $(TARGET)_fixup.elf ~/shared/vitasample.elf
-	@echo "Copied!"
+	@rm -rf $(TARGET).elf homebrew.elf $(OBJS)
