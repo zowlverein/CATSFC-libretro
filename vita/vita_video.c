@@ -8,39 +8,40 @@
  */
 bool retro_video_refresh_callback(const void *data, unsigned width, unsigned height, size_t pitch)
 {
-	curr_frame++;
+    curr_frame++;
 
-	// initialize our main render texture once we get the dimensions for the first time
-	if(!tex)
-	{
-		printf("Initializing main render texture");
+    // initialize our main render texture once we get the dimensions for the first time
+    if (!tex)
+    {
+        printf("Initializing main render texture");
 
-		curr_frame = 0;
-		scale = 2;
-		tex = vita2d_create_empty_texture_format(width, height, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
-		tex_data = vita2d_texture_get_datap(tex);
-		pos_x = (SCREEN_W / 2) - (width / 2) * scale;
-		pos_y = (SCREEN_H / 2) - (height / 2) * scale;
-	}
+        curr_frame = 0;
+        scale_x = SCREEN_W / width;
+        scale_y = SCREEN_H / height;
+        tex = vita2d_create_empty_texture_format(width, height, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
+        tex_data = vita2d_texture_get_datap(tex);
+        pos_x = (SCREEN_W / 2) - (width / 2) * scale_x;
+        pos_y = (SCREEN_H / 2) - (height / 2) * scale_y;
+    }
 
-	// copy the input pixels into the output buffer
-	const uint16_t* in_pixels = (const uint16_t*)data;
-	uint16_t *out_pixels = (uint16_t *)tex_data;
+    // copy the input pixels into the output buffer
+    const uint16_t* in_pixels = (const uint16_t*)data;
+    uint16_t *out_pixels = (uint16_t *)tex_data;
 
-	for (h = 0; h < height; h++, in_pixels += pitch / 2, out_pixels += width) 
-	{
-		memcpy(out_pixels, in_pixels, width * sizeof(uint16_t));
-	}
+    for (h = 0; h < height; h++, in_pixels += pitch / 2, out_pixels += width)
+    {
+        memcpy(out_pixels, in_pixels, width * sizeof(uint16_t));
+    }
 
     // draw the screen
-	vita2d_start_drawing();
+    vita2d_start_drawing();
 
-	vita2d_draw_texture_scale(tex, pos_x, pos_y, scale, scale);
+    vita2d_draw_texture_scale(tex, pos_x, pos_y, scale_x, scale_y);
     show_fps();
 
-	vita2d_end_drawing();
-	vita2d_swap_buffers();
-	return true;
+    vita2d_end_drawing();
+    vita2d_swap_buffers();
+    return true;
 }
 
 /***

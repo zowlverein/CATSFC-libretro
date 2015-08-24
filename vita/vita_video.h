@@ -21,7 +21,7 @@
 // helpers for rendering
 unsigned long curr_frame;
 clock_t last_render_time;
-int scale;
+int scale_x, scale_y;
 int pos_x, pos_y;
 unsigned short h, w;
 vita2d_texture *tex;
