@@ -231,7 +231,7 @@ void MixSound(void);
 #define STATIC static
 #endif
 
-#include <libretro.h>
+#include "../libretro/libretro.h"
 
 #endif
 

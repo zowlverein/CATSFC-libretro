@@ -1708,18 +1708,18 @@ void SPC7110Load(char* dirname)
    decompack = (Pack7110*)malloc(sizeof(Pack7110));
 
 #ifndef _XBOX
-   getcwd(temp_path, PATH_MAX);
+   //getcwd(temp_path, PATH_MAX);
 #endif
 
    memset(decompack, 0, sizeof(Pack7110));
 
 #ifndef _XBOX
-   if (-1 == chdir(dirname))
-      S9xMessage(0, 0, "Graphics Pack not found!");
+   //if (-1 == chdir(dirname))
+      //S9xMessage(0, 0, "Graphics Pack not found!");
 #endif
 
 #ifndef _XBOX
-   Load7110Index("index.bin");
+   //Load7110Index("index.bin");
 #else
    // D:\\ is always app.path in Xbox
    Load7110Index("d:\\index.bin");
@@ -1735,20 +1735,20 @@ void SPC7110Load(char* dirname)
 #else
          sprintf(binname, "%s%06X.bin", filename, decompack->tableEnts[i].table);
 #endif
-         struct stat buf;
-         if (-1 != stat(binname, &buf))
-            decompack->binfiles[i] = (uint8_t*)malloc(buf.st_size);
-         FILE* fp = fopen(binname, "rb");
-         if (fp)
-         {
-            fread(decompack->binfiles[i], buf.st_size, 1, fp);
-            fclose(fp);
-         }
+         //struct stat buf;
+        // if (-1 != stat(binname, &buf))
+        //    decompack->binfiles[i] = (uint8_t*)malloc(buf.st_size);
+        // FILE* fp = fopen(binname, "rb");
+         //if (fp)
+         //{
+         //   fread(decompack->binfiles[i], buf.st_size, 1, fp);
+        //    fclose(fp);
+        // }
       }
    }
 
 #ifndef _XBOX
-   chdir(temp_path);
+   //chdir(temp_path);
 #endif
 
    Copy7110 = &MovePackData;
@@ -1765,14 +1765,14 @@ void SPC7110Open(char* dirname)
    decompack = (Pack7110*)malloc(sizeof(Pack7110));
 
 #ifndef _XBOX
-   getcwd(temp_path, PATH_MAX);
+   //getcwd(temp_path, PATH_MAX);
 #endif
 
    memset(decompack, 0, sizeof(Pack7110));
 
 #ifndef _XBOX
-   if (-1 == chdir(dirname))
-      S9xMessage(0, 0, "Graphics Pack not found!");
+   //if (-1 == chdir(dirname))
+   //   S9xMessage(0, 0, "Graphics Pack not found!");
 #endif
 
 #ifndef _XBOX
@@ -1788,7 +1788,7 @@ void SPC7110Open(char* dirname)
    ReadPackData();
 
 #ifndef _XBOX
-   chdir(temp_path);
+   //chdir(temp_path);
 #endif
 
    Copy7110 = &ReadPackData;
@@ -1805,7 +1805,7 @@ void SPC7110Grab(char* dirname)
    decompack = (Pack7110*)malloc(sizeof(Pack7110));
 
 #ifndef _XBOX
-   getcwd(temp_path, PATH_MAX);
+   //getcwd(temp_path, PATH_MAX);
 #endif
 
    int32_t buffer_size = 1024 * 1024 * cacheMegs; //*some setting
@@ -1813,8 +1813,8 @@ void SPC7110Grab(char* dirname)
    memset(decompack, 0, sizeof(Pack7110));
 #ifndef _XBOX
 
-   if (-1 == chdir(dirname))
-      S9xMessage(0, 0, "Graphics Pack not found!");
+   //if (-1 == chdir(dirname))
+   //   S9xMessage(0, 0, "Graphics Pack not found!");
 #endif
 
 #ifndef _XBOX
@@ -1834,35 +1834,35 @@ void SPC7110Grab(char* dirname)
 #else
          sprintf(binname, "%s%06X.bin", filename, decompack->tableEnts[i].table);
 #endif
-         struct stat buf;
-         //add load/no load calculations here
-         if (-1 != stat(binname, &buf))
-         {
-            if (buf.st_size < buffer_size)
-               decompack->binfiles[i] = (uint8_t*)malloc(buf.st_size);
-            FILE* fp = fopen(binname, "rb");
-            //use them here
-            if (fp)
-            {
-               if (buf.st_size < buffer_size)
-               {
-                  fread(decompack->binfiles[i], buf.st_size, 1, fp);
-                  fclose(fp);
-                  buffer_size -= buf.st_size;
-                  decompack->tableEnts[i].is_file = false;
-               }
-               else
-               {
-                  decompack->binfiles[i] = (uint8_t*)fp;
-                  decompack->tableEnts[i].is_file = true;
-               }
-            }
-         }
+         //struct stat buf;
+         ////add load/no load calculations here
+         //if (-1 != stat(binname, &buf))
+         //{
+         //   if (buf.st_size < buffer_size)
+         //      decompack->binfiles[i] = (uint8_t*)malloc(buf.st_size);
+         //   FILE* fp = fopen(binname, "rb");
+         //   //use them here
+         //   if (fp)
+         //   {
+         //      if (buf.st_size < buffer_size)
+         //      {
+         //         fread(decompack->binfiles[i], buf.st_size, 1, fp);
+         //         fclose(fp);
+         //         buffer_size -= buf.st_size;
+         //         decompack->tableEnts[i].is_file = false;
+         //      }
+         //      else
+         //      {
+         //         decompack->binfiles[i] = (uint8_t*)fp;
+         //         decompack->tableEnts[i].is_file = true;
+         //      }
+         //   }
+         //}
       }
    }
 
 #ifndef _XBOX
-   chdir(temp_path);
+   //chdir(temp_path);
 #endif
 
    Copy7110 = &GetPackData;

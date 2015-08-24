@@ -1,24 +1,24 @@
 
 #include <stdio.h>
 
-#include "snes9x.h"
-#include "soundux.h"
-#include "memmap.h"
-#include "apu.h"
-#include "cheats.h"
-#include "display.h"
-#include "gfx.h"
-#include "cpuexec.h"
-#include "spc7110.h"
-#include "srtc.h"
-#include "sa1.h"
+#include "../source/snes9x.h"
+#include "../source/soundux.h"
+#include "../source/memmap.h"
+#include "../source/apu.h"
+#include "../source/cheats.h"
+#include "../source/display.h"
+#include "../source/gfx.h"
+#include "../source/cpuexec.h"
+#include "../source/spc7110.h"
+#include "../source/srtc.h"
+#include "../source/sa1.h"
 
 #ifdef PSP
 #include <pspkernel.h>
 #include <pspgu.h>
 #endif
 
-#include <libretro.h>
+#include "libretro.h"
 
 
 static retro_log_printf_t log_cb = NULL;
@@ -521,30 +521,30 @@ char* osd_GetPackDir()
 
    if (!strncmp((char*)&Memory.ROM [0xffc0], "SUPER POWER LEAG 4   ", 21))
    {
-      if (getenv("SPL4PACK"))
-         return getenv("SPL4PACK");
-      else
+      //if (getenv("SPL4PACK"))
+         //return getenv("SPL4PACK");
+      //else
          strcat(filename, "/SPL4-SP7");
    }
    else if (!strncmp((char*)&Memory.ROM [0xffc0], "MOMOTETSU HAPPY      ", 21))
    {
-      if (getenv("MDHPACK"))
-         return getenv("MDHPACK");
-      else
+      //if (getenv("MDHPACK"))
+         //return getenv("MDHPACK");
+      //else
          strcat(filename, "/SMHT-SP7");
    }
    else if (!strncmp((char*)&Memory.ROM [0xffc0], "HU TENGAI MAKYO ZERO ", 21))
    {
-      if (getenv("FEOEZPACK"))
-         return getenv("FEOEZPACK");
-      else
+      //if (getenv("FEOEZPACK"))
+         //return getenv("FEOEZPACK");
+      //else
          strcat(filename, "/FEOEZSP7");
    }
    else if (!strncmp((char*)&Memory.ROM [0xffc0], "JUMP TENGAIMAKYO ZERO", 21))
    {
-      if (getenv("SJNSPACK"))
-         return getenv("SJNSPACK");
-      else
+      //if (getenv("SJNSPACK"))
+         //return getenv("SJNSPACK");
+      //else
          strcat(filename, "/SJUMPSP7");
    }
    else strcat(filename, "/MISC-SP7");

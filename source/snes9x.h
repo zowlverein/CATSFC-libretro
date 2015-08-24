@@ -95,7 +95,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include <libretro.h>
+#include "../libretro/libretro.h"
 
 extern int cprintf(const char* fmt, ...);
 
