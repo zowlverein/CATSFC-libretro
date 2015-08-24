@@ -267,7 +267,7 @@ void init_sfc_setting(void)
    Settings.DisableMasterVolume = false;
    Settings.Mouse = true;
    Settings.SuperScope = true;
-   Settings.MultiPlayer5 = true;
+   Settings.MultiPlayer5 = false;
    Settings.ControllerOption = SNES_JOYPAD;
 
    Settings.Transparency = true;
@@ -280,7 +280,6 @@ void init_sfc_setting(void)
    Settings.StretchScreenshots = 1;
 
    Settings.HBlankStart = (256 * Settings.H_Max) / SNES_HCOUNTER_MAX;
-
 }
 
 void S9xAutoSaveSRAM()

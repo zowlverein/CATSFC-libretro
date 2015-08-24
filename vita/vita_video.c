@@ -49,9 +49,9 @@ bool retro_video_refresh_callback(const void *data, unsigned width, unsigned hei
 void show_fps()
 {
     clock_t now = clock();
-    float curr_fps = 1000000.0F / ((float)now - (float)last_render_time);
+    double curr_fps = 1000000 / ((double)now - (double)last_render_time);
     last_render_time = now;
 
     vita2d_draw_rectangle(10, 10, 128, 16, 0xFF000000);
-    font_draw_stringf(10, 10, 0xFFFFFFFF, "FPS: %d", (int)curr_fps);
+    font_draw_stringf(10, 10, 0xFFFFFFFF, "FPS: %d", (int)ceil(curr_fps));
 }

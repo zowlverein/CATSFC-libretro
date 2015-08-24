@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 #include <psp2/display.h>
 #include <psp2/gxm.h>

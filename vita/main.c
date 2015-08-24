@@ -94,9 +94,6 @@ void load_rom()
 	retro_load_game(&game);
 	printf("ROM loaded into emulator successfully");
 
-	// if a save file exists for the game, load it up
-	LoadSRAM();
-
 	// after we've loaded the rom, clear both buffers
 	// since we don't clear buffers between frames
 	// during execution. if we don't, the font
@@ -133,21 +130,3 @@ void vita_cleanup()
 	vita2d_fini();
     audio_shutdown();
 }
-
-///***
-// * Should simply return the filepath of the ROM, but replacing its file extension
-// * with the given extension.
-// */
-//const char* S9xGetFilename(const char* extension, uint32_t dirtype)
-//{ 
-//	size_t len = strlen(rom_path);
-//	return strcat(strndup(rom_path, len - 3), extension); 
-//}
-//
-///***
-// * Should simply return the folder that the ROM was loaded from.
-// */
-//const char* S9xGetDirectory(uint32_t dirtype) 
-//{ 
-//	return strndup(rom_path, strrchr(rom_path, '/') - rom_path + 1);
-//}
