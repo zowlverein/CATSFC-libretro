@@ -18,31 +18,20 @@ Based on:
 # Installation
 
 Run the emulator using the Rejuvenate for PSM Unity hack. This emulator will 
-likely not run under non-Unity Rejuvenate, due to RAM limitations
+likely not run under non-Unity Rejuvenate, but I haven't tested personally.
 
 # Usage
 
 Use FTPVita (or similar) to copy over ROM files to your PSVITA system. The ROMs
 can be anywhere on the filesystem. Once the ROMs are on your device, run the
-emulator. The emulator will present a touch-based file selector for choosing
-a game to load.
-
-Once in-game, if you'd like to choose another game, press UP + TRIANGLE + 
-L-TRIGGER + R-TRIGGER at the same time.
+emulator. You can configure the controls, but by default, pressing L-trigger + R-trigger
+during a game will bring you back to the menu.
 
 
 # Compilation
 
-This emulator is configured to build with the PSP2SDK. Might possibly be 
-migrating to vita-toolchain in the future. Also requires the following:
+This emulator is configured to build with the vitasdk. Also requires the following:
 
-vita_portlibs: https://github.com/xerpi/vita_portlibs
-vita2dlib: https://github.com/xerpi/vita2dlib
-
-# Future plans
-
-* Select files using either buttons or touch
-* Mouse and Super Scope support
-* Better menu with configurable emulation options
-* Save state support
-* Possibly more...
+* vita_portlibs: https://github.com/xerpi/vita_portlibs
+* vita2dlib: https://github.com/xerpi/vita2dlib
+* psplib4vita: https://github.com/frangarcj/psplib4vita
