@@ -163,6 +163,8 @@ static void OnOptionsChange();
 static void MenuClearScreen();
 static int MenuSaveScreenshot(const char* path);
 static int MenuSaveSequentialScreenshot();
+static int MenuSaveState(const char* path);
+static int MenuLoadState(const char* path);
 
 PspUiSplash SplashScreen =
 {
@@ -667,8 +669,7 @@ int OnSaveStateOk(const void *gallery, const void *item)
 
     if (pl_file_exists(path) && pspUiConfirm("Load state?"))
     {
-        // TODO enable save state
-        if (false)// S9xUnfreezeGame(path))
+        if (MenuLoadState(path))
         {
             ResumeEmulation = 1;
             pl_menu_find_item_by_id(&((const PspUiGallery*)gallery)->Menu, ((const pl_menu_item*)item)->id);
@@ -714,8 +715,7 @@ int OnSaveStateButtonPress(const PspUiGallery *gallery, pl_menu_item *sel, uint3
                 // first, save the screenshot to the file,
                 // then, append the actual savestate data to the 
                 // end of the same file
-                // TODO enable save states
-                if (!MenuSaveScreenshot(path) || true) //!S9xFreezeGame(path))
+                if (!MenuSaveScreenshot(path) || !MenuSaveState(path))
                 {
                     pspUiAlert("ERROR: Couldn't save savestate");
                     break;
@@ -1188,4 +1188,66 @@ int MenuSaveScreenshot(const char* path)
     pspImageDestroy(copy);
 
     return 1;
+}
+
+/***
+ * Saves the state of the emulator, using the libretro helper functions.
+ */
+int MenuSaveState(const char* path)
+{
+    size_t state_size = retro_serialize_size();
+    uint8_t* buffer = (uint8_t*)malloc(state_size);
+
+    // save the state to the buffer
+    retro_serialize(buffer, state_size);
+
+    // save the buffer to a file
+    FILE *f = fopen(path, "ab");
+
+    if (f)
+    {
+        fwrite(buffer, 1, state_size, f);
+        fclose(f);
+        return true;
+    }
+    else
+    {
+        fclose(f);
+        return false;
+    }
+}
+
+/***
+ * Loads the state of the emulator, using the libretro helper functions.
+ */
+int MenuLoadState(const char* path)
+{
+    size_t state_size = retro_serialize_size();
+    uint8_t* buffer = (uint8_t*)malloc(state_size);
+
+    // load the state from a file to our buffer
+    FILE *f = fopen(path, "rb");
+
+    if (f)
+    {
+        // in our implementation, save states are prepended
+        // by a PNG screenshot -- skip over the PNG
+        PspImage *image = pspImageLoadPngFd(f);
+        pspImageDestroy(image);
+        
+        // now read the actual data
+        fread(buffer, 1, state_size, f);
+
+        fclose(f);
+    }
+    else
+    {
+        fclose(f);
+
+        return false;
+    }
+
+    // load the buffer to the emulator's state
+    retro_unserialize(buffer, state_size);
+    return true;
 }
