@@ -103,6 +103,8 @@
 #include "sa1.h"
 #include "spc7110.h"
 
+#include "../vita/vita_menu.h"
+
 extern void S9xProcessSound(unsigned int);
 
 void S9xMainLoop_SA1_SFX(void);
@@ -217,6 +219,17 @@ void S9xMainLoop_SA1_SFX(void)
       S9xDeinterleaveMode2();
    }
 #endif
+
+   if (IPPU.SkippedFrames < Options.Frameskip)
+   {
+       IPPU.RenderThisFrame = false;
+       IPPU.SkippedFrames++;
+   }
+   else
+   {
+       IPPU.RenderThisFrame = true;
+       IPPU.SkippedFrames = 0;
+   }
 }
 
 void S9xMainLoop_SA1_NoSFX(void)
@@ -293,6 +306,17 @@ void S9xMainLoop_SA1_NoSFX(void)
    {
       S9xSyncSpeed();
       CPU.Flags &= ~SCAN_KEYS_FLAG;
+   }
+
+   if (IPPU.SkippedFrames < Options.Frameskip)
+   {
+       IPPU.RenderThisFrame = false;
+       IPPU.SkippedFrames++;
+   }
+   else
+   {
+       IPPU.RenderThisFrame = true;
+       IPPU.SkippedFrames = 0;
    }
 }
 
@@ -378,6 +402,17 @@ void S9xMainLoop_NoSA1_SFX(void)
       S9xDeinterleaveMode2();
    }
 #endif
+
+   if (IPPU.SkippedFrames < Options.Frameskip)
+   {
+       IPPU.RenderThisFrame = false;
+       IPPU.SkippedFrames++;
+   }
+   else
+   {
+       IPPU.RenderThisFrame = true;
+       IPPU.SkippedFrames = 0;
+   }
 }
 
 void S9xMainLoop_NoSA1_NoSFX(void)
@@ -452,6 +487,17 @@ void S9xMainLoop_NoSA1_NoSFX(void)
    {
       S9xSyncSpeed();
       CPU.Flags &= ~SCAN_KEYS_FLAG;
+   }
+
+   if (IPPU.SkippedFrames < Options.Frameskip)
+   {
+       IPPU.RenderThisFrame = false;
+       IPPU.SkippedFrames++;
+   }
+   else
+   {
+       IPPU.RenderThisFrame = true;
+       IPPU.SkippedFrames = 0;
    }
 }
 

@@ -131,6 +131,7 @@ typedef struct
    uint32_t DisplayedRenderedFrameCount;
    uint32_t SkippedFrames;
    uint32_t FrameSkip;
+   uint32_t	TotalEmulatedFrames;
    uint8_t*  TileCache [3];
    uint8_t*  TileCached [3];
 #ifdef CORRECT_VRAM_READS

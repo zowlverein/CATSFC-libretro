@@ -1166,6 +1166,7 @@ void InitROM(bool Interleaved)
     Settings.BS = false;
     Settings.OBC1 = false;
     Settings.SETA = false;
+    IPPU.TotalEmulatedFrames = 0;
     s7r.DataRomSize = 0;
     Memory.CalculatedChecksum = 0;
     uint8_t* RomHeader;
