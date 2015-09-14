@@ -20,6 +20,7 @@
 
 #include "libretro.h"
 
+#include "../vita/vita_menu.h"
 
 static retro_log_printf_t log_cb = NULL;
 static retro_video_refresh_t video_cb = NULL;
@@ -297,7 +298,9 @@ static void S9xAudioCallback()
    S9xFinalizeSamples();
    avail = S9xGetSampleCount();
    S9xMixSamples(audio_buf, avail);
-   audio_batch_cb(audio_buf, avail >> 1);
+
+   if(Options.EmulateSound)
+    audio_batch_cb(audio_buf, avail >> 1);
 }
 #endif
 
@@ -410,7 +413,7 @@ void retro_run(void)
    if (samples_to_play > 512)
    {
       S9xMixSamples((void*)audio_buf, ((int)samples_to_play) * 2);
-      audio_batch_cb(audio_buf, (int)samples_to_play);
+      if (Options.EmulateSound) { audio_batch_cb(audio_buf, (int)samples_to_play); }
       samples_to_play -= (int)samples_to_play;
    }
 #endif

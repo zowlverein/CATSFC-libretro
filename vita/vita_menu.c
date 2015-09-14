@@ -1065,14 +1065,6 @@ void TrashMenu()
 }
 
 /***
-* Should simply return the folder that the ROM was loaded from.
-*/
-const char* S9xGetDirectory(uint32_t dirtype)
-{
-    return strndup(GameName, strrchr(GameName, '/') - GameName + 1);
-}
-
-/***
  * Clears the screen...
  */
 void MenuClearScreen()

@@ -111,7 +111,4 @@ int  InitMenu();
 void DisplayMenu();
 void TrashMenu();
 
-const char* S9xGetFilename(const char* extension, uint32_t dirtype);
-const char* S9xGetDirectory(uint32_t dirtype);
-
 #endif // _EMUMENU_H
