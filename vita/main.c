@@ -8,34 +8,29 @@
  */
 int main()
 {
-	// first, initialize Vita2D
-	printf("Starting snes9x-next-vita");
-	vita2d_init();
-	vita2d_set_vblank_wait(true);
+    // first, initialize Vita2D
+    printf("Starting CATSFC-libretro-VITA");
+    vita2d_init_advanced(8 * 1024 * 1024);
 
-	// do some setup
-	setup_input();
-	setup_callbacks();
-	setup_audio();
-	retro_init();
+    // do some setup
+    setup_input();
+    setup_callbacks();
+    setup_audio();
 
-	// get the game ready
-	load_rom();
+    pl_psp_init("cache0:/CATSFC-libretro-VITA/");
 
-	// finally, enter the main loop
-	last_render_time = clock();
-	should_run = true;
+    // get the game ready
+    if (InitMenu())
+    {
+        DisplayMenu();
+        TrashMenu();
+    }
 
-	while(should_run)
-	{
-		retro_run();
-	}
+    // once emulation is complete, shut down and exit
+    vita_cleanup();
 
-	// once emulation is complete, shut down and exit
-	vita_cleanup();
-
-	sceKernelExitProcess(0);
-	return 0;
+    sceKernelExitProcess(0);
+    return 0;
 }
 
 /***
@@ -43,78 +38,25 @@ int main()
  */
 void setup_callbacks()
 {
-	printf("Setting up libretro callbacks...");
-
-	retro_set_environment(&retro_environment_callback);
-	retro_set_video_refresh(&retro_video_refresh_callback);
-	retro_set_input_poll(&retro_input_poll_callback);
-	retro_set_input_state(&retro_input_state_callback);
-	retro_set_audio_sample_batch(&retro_audio_sample_batch_callback);
-
-	printf("Libretro callbacks created successfully!");
+    retro_set_environment(&retro_environment_callback);
+    retro_set_video_refresh(&retro_video_refresh_callback);
+    retro_set_input_poll(&retro_input_poll_callback);
+    retro_set_input_state(&retro_input_state_callback);
+    retro_set_audio_sample_batch(&retro_audio_sample_batch_callback);
 }
 
 /***
  * Callback for updating the libretro environment.
  */
-void retro_environment_callback(unsigned cmd, void *data)
+int retro_environment_callback(unsigned cmd, void *data)
 {
-	// TODO: do something with this data...
-	// Also, retro_init() doesn't work if I just
-	// put a return here, hence the stupid printf.
-	if(curr_frame == 0)
-		printf("Inside of retro_environment_callback");
-}
+    // TODO: do something with this data...
+    // Also, retro_init() doesn't work if I just
+    // put a return here, hence the stupid printf.
+    if (curr_frame == 0)
+        printf("Inside of retro_environment_callback");
 
-/***
- * Utility function to load up the ROM using the libretro API.
- */
-void load_rom()
-{
-	// let the user choose a ROM
-	printf("Letting the user choose a ROM");
-
-	const char *start_path = "cache0:/VitaDefilerClient/Documents";
-	const char *supported_ext[] = { "smc", "fig", "sfc", "gd3", "gd7", 
-									"dx2", "bsx", "swc", 
-                                    "SMC", "FIG", "SFC", "GD3", "GD7",
-                                    "DX2", "BSX", "SWC", NULL };
-
-	file_choose(start_path, rom_path, "Choose a Super Nintendo / Super Famicom ROM", supported_ext);
-
-	// load the ROM into the emulator
-	printf("Loading the ROM into the emulator...");
-
-	struct retro_game_info game;
-	game.path = rom_path;
-	game.meta = NULL;
-	game.data = NULL;
-	game.size = NULL;
-
-	retro_load_game(&game);
-	printf("ROM loaded into emulator successfully");
-
-	// after we've loaded the rom, clear both buffers
-	// since we don't clear buffers between frames
-	// during execution. if we don't, the font
-	// will remain on the screen.
-	// doing less than this resulted in one buffer
-	// retaining the text. will clean up later.
-	vita2d_start_drawing();
-	vita2d_clear_screen();
-	vita2d_end_drawing();
-
-	vita2d_swap_buffers();
-
-	vita2d_start_drawing();
-	vita2d_clear_screen();
-	vita2d_end_drawing();
-
-	vita2d_swap_buffers();
-
-	vita2d_start_drawing();
-	vita2d_clear_screen();
-	vita2d_end_drawing();
+    return 0;
 }
 
 /***
@@ -122,11 +64,10 @@ void load_rom()
  */
 void vita_cleanup()
 {
-	free(tex);
-	free(tex_data);
-	free(keymap);
+    free(keymap);
     free(pad);
 
-	vita2d_fini();
+    vita2d_fini();
     audio_shutdown();
+    video_shutdown();
 }

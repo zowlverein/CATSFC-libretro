@@ -1,5 +1,8 @@
 TARGET = CATSFC-libretro-vita
 
+PSP_APP_NAME=CATSFC-libretro-vita
+PSP_APP_VER=1.1.0
+
 CORE_DIR := source
 VITA_DIR := vita
 LIBRETRO_DIR := libretro
@@ -13,36 +16,48 @@ SOURCES_C := \
 	$(CORE_DIR)/seta011.c $(CORE_DIR)/seta018.c $(CORE_DIR)/seta.c $(CORE_DIR)/soundux.c $(CORE_DIR)/spc700.c \
 	$(CORE_DIR)/spc7110.c $(CORE_DIR)/srtc.c $(CORE_DIR)/tile.c $(CORE_DIR)/apu_blargg.c
 SOURCES_C += $(LIBRETRO_DIR)/libretro.c
-SOURCES_C += $(VITA_DIR)/font_data.c $(VITA_DIR)/font.c $(VITA_DIR)/file_chooser.c $(VITA_DIR)/utils.c \
-    $(VITA_DIR)/vita_input.c $(VITA_DIR)/vita_audio.c $(VITA_DIR)/vita_video.c $(VITA_DIR)/main.c
+SOURCES_C += $(VITA_DIR)/utils.c $(VITA_DIR)/vita_input.c $(VITA_DIR)/vita_audio.c \
+             $(VITA_DIR)/vita_video.c $(VITA_DIR)/vita_menu.c $(VITA_DIR)/main.c
     
 OBJS := $(SOURCES_C:.c=.o)
 
-LIBS = -lSceDisplay_stub -lSceGxm_stub -lSceCtrl_stub -lSceTouch_stub -lSceAudio_stub -lc_stub -lm_stub -lvita2d
+LIBS = -lpsplib -lvita2d -lfreetype -lpng -lz -lm -lSceDisplay_stub -lSceGxm_stub 	\
+	-lSceCtrl_stub -lSceAudio_stub -lSceRtc_stub -lScePower_stub -lSceAppUtil_stub
 
-PREFIX   = $(DEVKITARM)/bin/arm-none-eabi
-CC       = $(PREFIX)-gcc
-CFLAGS   = -Wall -O3 -specs=psp2.specs -DVITA
+PREFIX   = arm-vita-eabi
+AS = $(PREFIX)-as
+CC = $(PREFIX)-gcc
+CXX		 = $(PREFIX)-g++
+READELF  = $(PREFIX)-readelf
+OBJDUMP  = $(PREFIX)-objdump
+
+CFLAGS   = -Wl,-q -O3 -DVITA
 CFLAGS  += -w -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -ftree-vectorize \
 		   -mfloat-abi=hard -ffast-math -fsingle-precision-constant -ftree-vectorizer-verbose=2 -fopt-info-vec-optimized -funroll-loops \
            -mword-relocations -fno-rtti -Wno-deprecated -Wno-comment -Wno-sequence-point
 CFLAGS  += -DHAVE_STRINGS_H -DHAVE_STDINT_H -DHAVE_INTTYPES_H -DRIGHTSHIFT_IS_SAR -DINLINE=inline -DFRONTEND_SUPPORTS_RGB565
 CFLAGS  += -DSPC700_C -DEXECUTE_SUPERFX_PER_LINE -DSDD1_DECOMP \
            -DVAR_CYCLES -DCPU_SHUTDOWN -DSPC700_SHUTDOWN \
-           -DNO_INLINE_SET_GET -DNOASM -DHAVE_MKSTEMP '-DACCEPT_SIZE_T=size_t' -DWANT_CHEATS
+           -DNO_INLINE_SET_GET -DNOASM -DHAVE_MKSTEMP '-DACCEPT_SIZE_T=size_t' -DWANT_CHEATS \
+           -DPSP_APP_NAME=\"$(PSP_APP_NAME)\" -DPSP_APP_VER=\"$(PSP_APP_VER)\"
 CFLAGS  += -D__LIBRETRO__
 ASFLAGS  = $(CFLAGS)
 
 
 INCFLAGS := -I$(CORE_DIR) -I$(VITA_DIR) -I$(LIBRETRO_DIR)
 
-all: $(TARGET).elf
+all: $(TARGET).velf
 
-$(TARGET).elf: homebrew.elf
-	psp2-fixup -q -S $< $@
+$(TARGET).velf: $(TARGET).elf
+		$(PREFIX)-strip -g $<
+		vita-elf-create  $< $@ ./db.json ./extra.json
 
-homebrew.elf: $(OBJS)
-	$(CC) $(CFLAGS) $(INCFLAGS) $^ $(LIBS) -o $@
+$(TARGET).elf: $(OBJS)
+	$(CC) $(CFLAGS) $(ASFLAGS) $(INCFLAGS) $^ $(LIBS) -o $@
 
 clean:
-	@rm -rf $(TARGET).elf homebrew.elf $(OBJS)
+	@rm -rf $(TARGET).elf $(TARGET).velf $(OBJS) $(DATA)/*.h
+
+copy: $(TARGET).velf
+	@cp $(TARGET).velf ~/shared/vitasample.elf
+	@echo "Copied!"

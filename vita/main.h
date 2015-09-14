@@ -19,24 +19,21 @@
 #include "vita_input.h"
 #include "vita_audio.h"
 #include "vita_video.h"
-#include "file_chooser.h"
+#include "vita_menu.h"
 #include "../libretro/libretro.h"
 
-PSP2_MODULE_INFO(0, 0, "snes9x-next-vita");
+PSP2_MODULE_INFO(0, 0, "CATSFC-libretro-VITA");
 
-bool should_run;
-
-// utility functions that the core requires us to implement
-const char* S9xGetFilename(const char* extension, uint32_t dirtype);
-const char* S9xGetDirectory(uint32_t dirtype);
+int ResumeEmulation;
 
 // utility functions for our own use
 void load_rom();
 void vita_cleanup();
 void setup_callbacks();
+void show_splash();
 
 // our collection of callbacks to plug in to libretro
-void retro_environment_callback(unsigned cmd, void *data);
+int retro_environment_callback(unsigned cmd, void *data);
 
 // needed for loading cheats and save files
 char rom_path[PATH_MAX];

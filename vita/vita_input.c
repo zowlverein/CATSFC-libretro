@@ -3,13 +3,13 @@
 
 #include "vita_input.h"
 
+void handle_button_press(unsigned int mapping, unsigned int pressed);
+
 /***
  * Initializes our keybinding to handle input later on.
  */
 void setup_input()
 {
-	printf("Setting up input data");
-
 	pad = (SceCtrlData*)malloc(sizeof(SceCtrlData));
 	keymap = (uint32_t*)malloc(sizeof(uint32_t) * 12);
 
@@ -20,10 +20,6 @@ void setup_input()
         printf("Unable to allocate memory for input data. Bailing.");
         sceKernelExitProcess(0);
     }
-    else
-    {
-	    printf("Input data initialized");
-    }
 }
 
 /***
@@ -32,30 +28,45 @@ void setup_input()
 void retro_input_poll_callback()
 {
 	sceCtrlPeekBufferPositive(0, pad, 1);
-	
     uint32_t keys_down = pad->buttons;
 
-	keymap[RETRO_DEVICE_ID_JOYPAD_A] = keys_down & PSP2_CTRL_CIRCLE;
-	keymap[RETRO_DEVICE_ID_JOYPAD_B] = keys_down & PSP2_CTRL_CROSS;
-	keymap[RETRO_DEVICE_ID_JOYPAD_X] = keys_down & PSP2_CTRL_TRIANGLE;
-	keymap[RETRO_DEVICE_ID_JOYPAD_Y] = keys_down & PSP2_CTRL_SQUARE;
-	keymap[RETRO_DEVICE_ID_JOYPAD_L] = keys_down & PSP2_CTRL_LTRIGGER;
-	keymap[RETRO_DEVICE_ID_JOYPAD_R] = keys_down & PSP2_CTRL_RTRIGGER;
-	keymap[RETRO_DEVICE_ID_JOYPAD_START] = keys_down & PSP2_CTRL_START;
-	keymap[RETRO_DEVICE_ID_JOYPAD_SELECT] = keys_down & PSP2_CTRL_SELECT;
-	keymap[RETRO_DEVICE_ID_JOYPAD_UP] = (keys_down & PSP2_CTRL_UP) || (pad->ly < 128 - JOY_THRESHOLD);
-	keymap[RETRO_DEVICE_ID_JOYPAD_DOWN] = (keys_down & PSP2_CTRL_DOWN) || (pad->ly > 128 + JOY_THRESHOLD);
-	keymap[RETRO_DEVICE_ID_JOYPAD_LEFT] = (keys_down & PSP2_CTRL_LEFT) || (pad->lx < 128 - JOY_THRESHOLD);
-	keymap[RETRO_DEVICE_ID_JOYPAD_RIGHT] = (keys_down & PSP2_CTRL_RIGHT) || (pad->lx > 128 + JOY_THRESHOLD);
+    // first, handle (single) physical button presses
+    unsigned int i;
 
-	// TODO: make this user-configurable
-	// take the user back to the menu if they
-	// press up + triangle + L + R
-	if(keymap[RETRO_DEVICE_ID_JOYPAD_X] && keymap[RETRO_DEVICE_ID_JOYPAD_UP] && 
-		keymap[RETRO_DEVICE_ID_JOYPAD_L] && keymap[RETRO_DEVICE_ID_JOYPAD_R])
-	{
-		load_rom();
-	}
+    for (i = MAP_BUTTON_UP; i <= MAP_BUTTON_START; i++)
+    {
+        handle_button_press(ActiveConfig.ButtonMap[i], keys_down & PhysicalButtonMap[i]);
+    }
+
+    // next, handle multi-button presses (L + R or start + select)
+    if ((keys_down & PSP2_CTRL_LTRIGGER) && (keys_down & PSP2_CTRL_RTRIGGER))
+    {
+        handle_button_press(ActiveConfig.ButtonMap[MAP_BUTTON_LRTRIGGERS], true);
+    }
+
+    if ((keys_down & PSP2_CTRL_START) && (keys_down & PSP2_CTRL_SELECT))
+    {
+        handle_button_press(ActiveConfig.ButtonMap[MAP_BUTTON_STARTSELECT], true);
+    }
+
+    // finally, handle analog sticks
+    if (pad->ly < 128 - JOY_THRESHOLD) // analog up
+    {
+        handle_button_press(ActiveConfig.ButtonMap[MAP_ANALOG_UP], true);
+    }
+    else if (pad->ly > 128 + JOY_THRESHOLD) // analog down
+    {
+        handle_button_press(ActiveConfig.ButtonMap[MAP_ANALOG_DOWN], true);
+    }
+
+    if (pad->lx < 128 - JOY_THRESHOLD) // analog left
+    {
+        handle_button_press(ActiveConfig.ButtonMap[MAP_ANALOG_LEFT], true);
+    }
+    else if (pad->lx > 128 + JOY_THRESHOLD) // analog right
+    {
+        handle_button_press(ActiveConfig.ButtonMap[MAP_ANALOG_RIGHT], true);
+    }
 }
 
 /***
@@ -63,12 +74,22 @@ void retro_input_poll_callback()
  */
 int16_t retro_input_state_callback(unsigned port, unsigned device, unsigned index, unsigned id)
 {
-    if (port == 0)
+	return keymap[id];
+}
+
+/***
+ * Handles an input mapping and whether or not it's actually being pressed
+ */
+void handle_button_press(unsigned int mapping, unsigned int pressed)
+{
+    // handle it just being a normal button press
+    if (mapping <= RETRO_DEVICE_ID_JOYPAD_R)
     {
-        return keymap[id];
+        keymap[mapping] = pressed;
     }
-    else
+    // user wants to go back to the menu
+    else if (pressed && (mapping == SPC_MENU))
     {
-        return false;
+        ResumeEmulation = 0;
     }
 }
