@@ -22,7 +22,8 @@ SOURCES_C += $(VITA_DIR)/utils.c $(VITA_DIR)/vita_input.c $(VITA_DIR)/vita_audio
 OBJS := $(SOURCES_C:.c=.o)
 
 LIBS = -lpsplib -lvita2d -lfreetype -lpng -lz -lm -lSceDisplay_stub -lSceGxm_stub 	\
-	-lSceCtrl_stub -lSceAudio_stub -lSceRtc_stub -lScePower_stub -lSceAppUtil_stub
+	-lSceCtrl_stub -lSceAudio_stub -lSceRtc_stub -lScePower_stub -lSceAppUtil_stub \
+    -lSceCommonDialog_stub
 
 PREFIX   = arm-vita-eabi
 AS = $(PREFIX)-as

@@ -948,7 +948,7 @@ uint32_t FileLoader(uint8_t* buffer, const char* filename, int32_t maxsize)
     memmove(&ext[0], &ext[1], 4);
 #endif
 
-    if ((ROMFile = sceIoOpen(fname, PSP2_O_RDONLY, 0777)) == NULL)
+    if ((ROMFile = sceIoOpen(fname, SCE_O_RDONLY, 0777)) == NULL)
         return (0);
 
     strcpy(Memory.ROMFilename, fname);
@@ -1023,7 +1023,7 @@ uint32_t FileLoader(uint8_t* buffer, const char* filename, int32_t maxsize)
         else
             more = false;
 
-    } while (more && (ROMFile = sceIoOpen(fname, PSP2_O_RDONLY, 0777)) != NULL);
+    } while (more && (ROMFile = sceIoOpen(fname, SCE_O_RDONLY, 0777)) != NULL);
 
 
 
@@ -1505,7 +1505,7 @@ bool LoadSRAM(const char* filename)
     if (size)
     {
         SceUID file;
-        file = sceIoOpen(filename, PSP2_O_RDONLY, 0777);
+        file = sceIoOpen(filename, SCE_O_RDONLY, 0777);
 
         if (file)
         {
@@ -1561,7 +1561,7 @@ bool SaveSRAM(const char* filename)
     if (size && *Memory.ROMFilename)
     {
         SceUID file;
-        file = sceIoOpen(filename, PSP2_O_WRONLY | PSP2_O_CREAT, 0777);
+        file = sceIoOpen(filename, SCE_O_WRONLY | SCE_O_CREAT, 0777);
 
         if (file)
         {
