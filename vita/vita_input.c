@@ -74,6 +74,9 @@ void retro_input_poll_callback()
  */
 int16_t retro_input_state_callback(unsigned port, unsigned device, unsigned index, unsigned id)
 {
+    if (port != 0)
+        return 0;
+
 	return keymap[id];
 }
 
