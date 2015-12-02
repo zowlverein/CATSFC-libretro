@@ -1,7 +1,7 @@
 TARGET = CATSFC-libretro-vita
 
 PSP_APP_NAME=CATSFC-libretro-vita
-PSP_APP_VER=1.1.0
+PSP_APP_VER=1.1.1
 
 CORE_DIR := source
 VITA_DIR := vita
