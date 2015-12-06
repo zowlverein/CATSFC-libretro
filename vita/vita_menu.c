@@ -86,6 +86,22 @@ PL_MENU_OPTIONS_BEGIN(ButtonMapOptions)
     PL_MENU_OPTION("Start",    RETRO_DEVICE_ID_JOYPAD_START)
     PL_MENU_OPTION("Select",   RETRO_DEVICE_ID_JOYPAD_SELECT)
 PL_MENU_OPTIONS_END
+PL_MENU_OPTIONS_BEGIN(ControllerDeviceOptions)
+    PL_MENU_OPTION("SNES Joypad", SNES_JOYPAD)
+    PL_MENU_OPTION("SNES Mouse", SNES_MOUSE_SWAPPED)
+PL_MENU_OPTIONS_END
+PL_MENU_OPTIONS_BEGIN(MouseSensitivityOptions)
+    PL_MENU_OPTION("1", 1)
+    PL_MENU_OPTION("2", 2)
+    PL_MENU_OPTION("3", 3)
+    PL_MENU_OPTION("4", 4)
+    PL_MENU_OPTION("5", 5)
+    PL_MENU_OPTION("6", 6)
+    PL_MENU_OPTION("7", 7)
+    PL_MENU_OPTION("8", 8)
+    PL_MENU_OPTION("9", 9)
+    PL_MENU_OPTION("10", 10)
+PL_MENU_OPTIONS_END
 
 /* Define the actual menus */
 PL_MENU_ITEMS_BEGIN(OptionMenuDef)
@@ -94,6 +110,9 @@ PL_MENU_ITEMS_BEGIN(OptionMenuDef)
         PL_MENU_ITEM("Screen smoothing", OPTION_TEXTURE_FILTER, ToggleOptions,"\026\250\020 Enable/disable screen smoothing")
     PL_MENU_HEADER("Audio")
         PL_MENU_ITEM("Enable sound", OPTION_EMULATE_SOUND, ToggleOptions, "\026\001\020 Enable/disable sound")
+    PL_MENU_HEADER("Control device")
+        PL_MENU_ITEM("Device", OPTION_CONTROLLER_DEVICE, ControllerDeviceOptions, "\026\250\020 Change the device plugged into the controller port")
+        PL_MENU_ITEM("Mouse speed", OPTION_MOUSE_SENSITIVITY, MouseSensitivityOptions, "\026\250\020 Adjust the speed of the SNES mouse")
     PL_MENU_HEADER("Performance")
         PL_MENU_ITEM("Frame limiter", OPTION_SYNC_FREQ, FrameLimitOptions, "\026\250\020 Change screen update frequency")
         PL_MENU_ITEM("Frame skipping", OPTION_FRAMESKIP, FrameSkipOptions, "\026\250\020 Change number of frames skipped per update")
@@ -389,6 +408,9 @@ void LoadOptions()
 
     Options.EmulateSound  = pl_ini_get_int(&init, "Audio", "Emulate Sound", 1);
 
+    Options.ControllerDevice = pl_ini_get_int(&init, "Control", "Controller device", SNES_JOYPAD);
+    Options.MouseSpeed = pl_ini_get_int(&init, "Control", "Mouse speed", 1);
+
     /* Clean up */
     pl_ini_destroy(&init);
 }
@@ -416,6 +438,9 @@ int SaveOptions()
     pl_ini_set_int(&init, "Menu", "Animate", UiMetric.Animate);
 
     pl_ini_set_int(&init, "Audio", "Emulate Sound", Options.EmulateSound);
+
+    pl_ini_set_int(&init, "Control", "Controller device", Options.ControllerDevice);
+    pl_ini_set_int(&init, "Control", "Mouse speed", Options.MouseSpeed);
 
     /* Save INI file */
     int status = pl_ini_save(&init, path);
@@ -460,6 +485,10 @@ void DisplayMenu()
             pl_menu_select_option_by_value(item, (void*)Options.TextureFilter);
             item = pl_menu_find_item_by_id(&OptionUiMenu.Menu, OPTION_EMULATE_SOUND);
             pl_menu_select_option_by_value(item, (void*)Options.EmulateSound);
+            item = pl_menu_find_item_by_id(&OptionUiMenu.Menu, OPTION_CONTROLLER_DEVICE);
+            pl_menu_select_option_by_value(item, (void*)Options.ControllerDevice);
+            item = pl_menu_find_item_by_id(&OptionUiMenu.Menu, OPTION_MOUSE_SENSITIVITY);
+            pl_menu_select_option_by_value(item, (void*)Options.MouseSpeed);
             item = pl_menu_find_item_by_id(&OptionUiMenu.Menu, OPTION_SYNC_FREQ);
             pl_menu_select_option_by_value(item, (void*)Options.UpdateFreq);
             item = pl_menu_find_item_by_id(&OptionUiMenu.Menu, OPTION_FRAMESKIP);
@@ -799,6 +828,12 @@ int OnMenuItemChanged(const struct PspUiMenu *uimenu, pl_menu_item* item, const 
         case OPTION_EMULATE_SOUND:
             Options.EmulateSound = value;
             break;
+        case OPTION_CONTROLLER_DEVICE:
+            Options.ControllerDevice = value;
+            break;
+        case OPTION_MOUSE_SENSITIVITY:
+            Options.MouseSpeed = value;
+            break;
         case OPTION_SYNC_FREQ:
             Options.UpdateFreq = value;
             break;
@@ -1105,6 +1140,12 @@ void OnOptionsChange()
     // recompute update frequency
     TicksPerSecond = sceRtcGetTickResolution();
 
+    // controller device
+    Settings.ControllerOption = Options.ControllerDevice;
+    Settings.MouseMaster = (Options.ControllerDevice == SNES_MOUSE_SWAPPED);
+    Settings.MouseSpeed = Options.MouseSpeed;
+
+    // frame limiter
     if (Options.UpdateFreq)
     {
         TicksPerUpdate = TicksPerSecond / Options.UpdateFreq;

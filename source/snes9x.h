@@ -354,6 +354,10 @@ typedef struct
    int    AIDOShmId;
    bool  NoPatch;
    bool  ForceInterleaveGD24;
+
+   /* Custom options */
+   int MouseSpeed;
+
 #ifdef DEBUG_MAXCOUNT
    unsigned int MaxCount;
 #endif

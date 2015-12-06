@@ -269,8 +269,6 @@ void init_sfc_setting(void)
    Settings.Mouse = true;
    Settings.SuperScope = true;
    Settings.MultiPlayer5 = false;
-   Settings.ControllerOption = SNES_JOYPAD;
-
    Settings.Transparency = true;
    Settings.SupportHiRes = true;
    Settings.ThreadSound = false;
@@ -487,11 +485,6 @@ void S9xProcessSound(unsigned int samples)
 void S9xLoadSDD1Data()
 {
 
-}
-
-bool S9xReadMousePosition(int which1, int* x, int* y, uint32_t* buttons)
-{
-   return (false);
 }
 
 bool S9xReadSuperScopePosition(int* x, int* y, uint32_t* buttons)

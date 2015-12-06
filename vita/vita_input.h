@@ -13,11 +13,16 @@
 
 #include "vita_menu.h"
 #include "../libretro/libretro.h"
+#include "../source/snes9x.h"
 
 // helpers for input
 SceCtrlData *pad;
 uint32_t *keymap;
+uint32_t keys_down;
+int mouse_current_x;
+int mouse_current_y;
 extern int ResumeEmulation;
+bool stick_in_use;
 
 void setup_input();
 void retro_input_poll_callback();

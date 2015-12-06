@@ -12,6 +12,8 @@ void setup_input()
 {
 	pad = (SceCtrlData*)malloc(sizeof(SceCtrlData));
 	keymap = (uint32_t*)malloc(sizeof(uint32_t) * 12);
+    mouse_current_x = 0;
+    mouse_current_y = 0;
 
 	sceCtrlSetSamplingMode(SCE_CTRL_MODE_ANALOG);
 
@@ -28,7 +30,8 @@ void setup_input()
 void retro_input_poll_callback()
 {
 	sceCtrlPeekBufferPositive(0, pad, 1);
-    uint32_t keys_down = pad->buttons;
+    keys_down = pad->buttons;
+    stick_in_use = false;
 
     // first, handle (single) physical button presses
     unsigned int i;
@@ -49,23 +52,54 @@ void retro_input_poll_callback()
         handle_button_press(ActiveConfig.ButtonMap[MAP_BUTTON_STARTSELECT], true);
     }
 
-    // finally, handle analog sticks
+    // handle the left analog stick
     if (pad->ly < 128 - JOY_THRESHOLD) // analog up
     {
         handle_button_press(ActiveConfig.ButtonMap[MAP_ANALOG_UP], true);
+        mouse_current_y += ((pad->ly - 128) / 90) * Settings.MouseSpeed;
+        stick_in_use = true;
     }
     else if (pad->ly > 128 + JOY_THRESHOLD) // analog down
     {
         handle_button_press(ActiveConfig.ButtonMap[MAP_ANALOG_DOWN], true);
+        mouse_current_y += ((pad->ly - 128) / 90) * Settings.MouseSpeed;
+        stick_in_use = true;
     }
 
     if (pad->lx < 128 - JOY_THRESHOLD) // analog left
     {
         handle_button_press(ActiveConfig.ButtonMap[MAP_ANALOG_LEFT], true);
+        mouse_current_x += ((pad->lx - 128) / 90) * Settings.MouseSpeed;
+        stick_in_use = true;
     }
     else if (pad->lx > 128 + JOY_THRESHOLD) // analog right
     {
         handle_button_press(ActiveConfig.ButtonMap[MAP_ANALOG_RIGHT], true);
+        mouse_current_x += ((pad->lx - 128) / 90) * Settings.MouseSpeed;
+        stick_in_use = true;
+    }
+
+    // only handle the right analog stick if the left stick wasn't in use,
+    // so they don't double each other or cancel each other out
+    if (!stick_in_use)
+    {
+        if (pad->ry < 128 - JOY_THRESHOLD) // analog up
+        {
+            mouse_current_y += ((pad->ry - 128) / 90) * Settings.MouseSpeed;
+        }
+        else if (pad->ry > 128 + JOY_THRESHOLD) // analog down
+        {
+            mouse_current_y += ((pad->ry - 128) / 90) * Settings.MouseSpeed;
+        }
+
+        if (pad->rx < 128 - JOY_THRESHOLD) // analog left
+        {
+            mouse_current_x += ((pad->rx - 128) / 90) * Settings.MouseSpeed;
+        }
+        else if (pad->rx > 128 + JOY_THRESHOLD) // analog right
+        {
+            mouse_current_x += ((pad->rx - 128) / 90) * Settings.MouseSpeed;
+        }
     }
 }
 
@@ -75,7 +109,9 @@ void retro_input_poll_callback()
 int16_t retro_input_state_callback(unsigned port, unsigned device, unsigned index, unsigned id)
 {
     if (port != 0)
+    {
         return 0;
+    }
 
 	return keymap[id];
 }
@@ -95,4 +131,17 @@ void handle_button_press(unsigned int mapping, unsigned int pressed)
     {
         ResumeEmulation = 0;
     }
+}
+
+/***
+ * Emulate the SNES mouse. I think this is only used in Mario Paint, but goddamnit,
+ * I love Mario Paint.
+ */
+bool S9xReadMousePosition(int which1, int* x, int* y, uint32_t* buttons)
+{
+    *x = mouse_current_x;
+    *y = mouse_current_y;
+    *buttons = 0;
+
+    return true;
 }
