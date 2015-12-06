@@ -139,9 +139,32 @@ void handle_button_press(unsigned int mapping, unsigned int pressed)
  */
 bool S9xReadMousePosition(int which1, int* x, int* y, uint32_t* buttons)
 {
+    if (which1 != 0)
+    {
+        return false;
+    }
+
+    // right now, mouse controls are hard-coded to the analog sticks,
+    // and a few buttons acting as L/R-click. maybe later I'll make it
+    // configurable
     *x = mouse_current_x;
     *y = mouse_current_y;
-    *buttons = 0;
+
+    // left-click is cross, square, or L-trigger
+    if ((keys_down & SCE_CTRL_LTRIGGER) ||
+        (keys_down & SCE_CTRL_SQUARE) ||
+        (keys_down & SCE_CTRL_CROSS))
+    {
+        *buttons |= 0x1;
+    }
+
+    // right-click is circle, triangle, or R-trigger
+    if ((keys_down & SCE_CTRL_RTRIGGER) ||
+        (keys_down & SCE_CTRL_TRIANGLE) ||
+        (keys_down & SCE_CTRL_CIRCLE))
+    {
+        *buttons |= 0x2;
+    }
 
     return true;
 }
