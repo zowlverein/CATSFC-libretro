@@ -395,12 +395,12 @@ void LoadOptions()
     pl_ini_load(&init, path);
 
     /* Load values */
-    Options.DisplayMode   = pl_ini_get_int(&init, "Video", "Display Mode", DISPLAY_MODE_UNSCALED);
-    Options.TextureFilter = pl_ini_get_int(&init, "Video", "Screen smoothing", 0);
-    Options.UpdateFreq    = pl_ini_get_int(&init, "Video", "Update Frequency", 0);
-    Options.Frameskip     = pl_ini_get_int(&init, "Video", "Frameskip", 1);
-    Options.VSync         = pl_ini_get_int(&init, "Video", "VSync", 1);
-    Options.ClockFreq     = pl_ini_get_int(&init, "Video", "PSP Clock Frequency", 333);
+    Options.DisplayMode   = pl_ini_get_int(&init, "Video", "Display Mode", DISPLAY_MODE_FIT_HEIGHT);
+    Options.TextureFilter = pl_ini_get_int(&init, "Video", "Screen smoothing", 1);
+    Options.UpdateFreq    = pl_ini_get_int(&init, "Video", "Update Frequency", 60);
+    Options.Frameskip     = pl_ini_get_int(&init, "Video", "Frameskip", 0);
+    Options.VSync         = pl_ini_get_int(&init, "Video", "VSync", 0);
+    Options.ClockFreq     = pl_ini_get_int(&init, "Video", "PSP Clock Frequency", 444);
     Options.ShowFps       = pl_ini_get_int(&init, "Video", "Show FPS", 0);
 
     Options.ControlMode   = pl_ini_get_int(&init, "Menu", "Control Mode", 0);
@@ -554,7 +554,7 @@ void OnSplashRender(const void *splash, const void *null)
         PSP_APP_NAME" version "PSP_APP_VER" ("__DATE__")",
         "\026https://github.com/skogaby/CATSFC-libretro",
         " ",
-        "2015 skogaby",
+        "2016 skogaby",
         "Based on CATSFC-libretro",
         "\026https://github.com/libretro/CATSFC-libretro",
         NULL

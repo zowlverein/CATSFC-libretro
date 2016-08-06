@@ -51,7 +51,10 @@ all: eboot.bin
 
 eboot.bin: $(TARGET).velf
 	vita-make-fself $(TARGET).velf eboot.bin
-	vita-mksfoex -s TITLE_ID=SKOG10001 "CATSFC Libretro Vita" param.sfo
+	vita-mksfoex -s TITLE_ID=SKOG10001 "CATSFC-libretro-vita" param.sfo
+	cp param.sfo ./vpk/sce_sys/
+	cp eboot.bin ./vpk/
+	cd ./vpk/ && zip -r ../$(TARGET).vpk eboot.bin sce_sys && cd ..
 
 $(TARGET).velf: $(TARGET).elf
 		$(PREFIX)-strip -g $<
@@ -61,7 +64,7 @@ $(TARGET).elf: $(OBJS)
 	$(CC) $(CFLAGS) $(ASFLAGS) $(INCFLAGS) $^ $(LIBS) -o $@
 
 clean:
-	@rm -rf $(TARGET).elf $(TARGET).velf $(OBJS) $(DATA)/*.h
+	@rm -rf $(TARGET).elf $(TARGET).velf $(TARGET).vpk $(OBJS) $(DATA)/*.h vpk/sce_sys/param.sfo vpk/eboot.bin
 
 copy: $(TARGET).velf
 	@cp $(TARGET).velf ~/shared/vitasample.elf
