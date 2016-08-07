@@ -19,9 +19,9 @@
 SceCtrlData *pad;
 uint32_t keymap[2][12];
 uint32_t keys_down[2];
-int mouse_current_x[2];
-int mouse_current_y[2];
-bool stick_in_use[2];
+int mouse_current_x;
+int mouse_current_y;
+bool stick_in_use;
 extern int ResumeEmulation;
 
 void setup_input();
