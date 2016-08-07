@@ -64,7 +64,6 @@ int retro_environment_callback(unsigned cmd, void *data)
  */
 void vita_cleanup()
 {
-    free(keymap);
     free(pad);
 
     vita2d_fini();

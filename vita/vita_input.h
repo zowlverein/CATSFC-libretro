@@ -17,12 +17,12 @@
 
 // helpers for input
 SceCtrlData *pad;
-uint32_t *keymap;
-uint32_t keys_down;
-int mouse_current_x;
-int mouse_current_y;
+uint32_t keymap[2][12];
+uint32_t keys_down[2];
+int mouse_current_x[2];
+int mouse_current_y[2];
+bool stick_in_use[2];
 extern int ResumeEmulation;
-bool stick_in_use;
 
 void setup_input();
 void retro_input_poll_callback();
