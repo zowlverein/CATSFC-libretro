@@ -23,7 +23,15 @@ OBJS := $(SOURCES_C:.c=.o)
 
 LIBS = -lpsplib -lvita2d -lfreetype -lpng -lz -lm -lSceCommonDialog_stub -lSceSysmodule_stub -lSceDisplay_stub -lSceGxm_stub 	\
 	-lSceCtrl_stub -lSceAudio_stub -lSceRtc_stub -lScePower_stub -lSceAppUtil_stub \
-    -lSceCommonDialog_stub
+    -lSceCommonDialog_stub -lSceAppMgr_stub 
+
+PREFIX   = arm-vita-eabi
+AS = $(PREFIX)-as
+CC = $(PREFIX)-gcc
+CXX		 = $(PREFIX)-g++
+READELF  = $(PREFIX)-readelf
+OBJDUMP  = $(PREFIX)-objdump
+
 
 PREFIX   = arm-vita-eabi
 AS = $(PREFIX)-as
@@ -33,7 +41,7 @@ READELF  = $(PREFIX)-readelf
 OBJDUMP  = $(PREFIX)-objdump
 
 CFLAGS   = -Wl,-q -O3 -DVITA
-CFLAGS  += -w -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -ftree-vectorize \
+CFLAGS  += -w  -fcommon -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -ftree-vectorize \
 		   -mfloat-abi=hard -ffast-math -fsingle-precision-constant -ftree-vectorizer-verbose=2 -fopt-info-vec-optimized -funroll-loops \
            -mword-relocations -fno-rtti -Wno-deprecated -Wno-comment -Wno-sequence-point
 CFLAGS  += -DHAVE_STRINGS_H -DHAVE_STDINT_H -DHAVE_INTTYPES_H -DRIGHTSHIFT_IS_SAR -DINLINE=inline -DFRONTEND_SUPPORTS_RGB565
@@ -51,7 +59,7 @@ all: eboot.bin
 
 eboot.bin: $(TARGET).velf
 	vita-make-fself $(TARGET).velf eboot.bin
-	vita-mksfoex -s TITLE_ID=SKOG10001 "CATSFC-libretro-vita" param.sfo
+	vita-mksfoex -s TITLE_ID=SKOG10002 "CATSFC-libretro-vita" param.sfo
 	cp param.sfo ./vpk/sce_sys/
 	cp eboot.bin ./vpk/
 	cd ./vpk/ && zip -r ../$(TARGET).vpk eboot.bin sce_sys && cd ..
@@ -64,7 +72,7 @@ $(TARGET).elf: $(OBJS)
 	$(CC) $(CFLAGS) $(ASFLAGS) $(INCFLAGS) $^ $(LIBS) -o $@
 
 clean:
-	@rm -rf $(TARGET).elf $(TARGET).velf $(TARGET).vpk $(OBJS) $(DATA)/*.h vpk/sce_sys/param.sfo vpk/eboot.bin
+	@rm -rf $(TARGET).elf $(TARGET).velf $(TARGET).vpk $(OBJS) $(DATA)/*.h vpk/sce_sys/param.sfo vpk/eboot.bin eboot.bin param.sfo
 
 copy: $(TARGET).velf
 	@cp $(TARGET).velf ~/shared/vitasample.elf

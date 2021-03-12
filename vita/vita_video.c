@@ -127,9 +127,9 @@ void show_fps()
     sprintf(fps_display, "FPS: %3.02f", curr_fps);
 
     int width = pspFontGetTextWidth(&PspStockFont, fps_display);
-    int height = pspFontGetLineHeight(&PspStockFont);
+    int height = 16;
 
-    pspVideoFillRect(0, 0, width, height, PSP_COLOR_BLACK);
+    pspVideoFillRect(0, 0, width, height + 1, PSP_COLOR_BLACK);
     pspVideoPrint(&PspStockFont, 0, 0, fps_display, PSP_COLOR_WHITE);
 }
 

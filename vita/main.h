@@ -12,7 +12,6 @@
 #include <math.h>
 #include <malloc.h>
 
-#include <psp2/moduleinfo.h>
 #include <psp2/types.h>
 
 #include "utils.h"
@@ -21,8 +20,6 @@
 #include "vita_video.h"
 #include "vita_menu.h"
 #include "../libretro/libretro.h"
-
-PSP2_MODULE_INFO(0, 0, "CATSFC-libretro-VITA");
 
 int ResumeEmulation;
 
