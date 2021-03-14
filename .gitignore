@@ -58,3 +58,5 @@ Debug/
 Release/
 *.vcxproj
 *.vcxproj.filters
+
+*.ini
